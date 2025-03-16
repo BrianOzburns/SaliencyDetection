@@ -100,7 +100,7 @@ def extractStructuralEdges(image):
     # Apply Bilateral Filter to reduce noise while preserving edges
     filtered = cv2.bilateralFilter(gray, d=11, sigmaColor=15, sigmaSpace=15)
 
-    plotEdges(filtered)
+    # plotEdges(filtered)
 
     # Apply Canny edge detection with adjusted thresholds
     edges = cv2.Canny(filtered, threshold1=5, threshold2=25)
@@ -111,7 +111,7 @@ def extractStructuralEdges(image):
     # Optional: Use erosion to remove small artifacts and refine larger edges
     refined_edges = cv2.erode(dilated_edges, None, iterations=1)
 
-    plotEdges(refined_edges)
+    # plotEdges(refined_edges)
 
     # Apply Gaussian blur to reduce finer details and noise
     # blurred = cv2.GaussianBlur(refined_edges, (31, 31), 1)
@@ -122,7 +122,7 @@ def extractStructuralEdges(image):
     kernel = np.ones((4, 4), np.uint8)
     closed_edges = cv2.morphologyEx(refined_edges, cv2.MORPH_CLOSE, kernel, iterations=5)
 
-    plotEdges(closed_edges)
+    # plotEdges(closed_edges)
 
     # Find contours on the edge image
     contours, _ = cv2.findContours(closed_edges.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)

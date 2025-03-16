@@ -135,18 +135,23 @@ def top_k_segments(ranking, result, k=4):
     for d in result[0].summary():
         class_name = d['name']
         if class_name in all_class_segments:
-            all_class_segments[class_name].append(d['segments'])
+            all_class_segments[class_name].append((d['segments'], d['confidence']))
         else:
-            all_class_segments[class_name] = [d['segments']]
+            all_class_segments[class_name] = [(d['segments'], d['confidence'])]
 
     output_segment = []
     top_k = k
     for obj in ranking:
         if obj in all_class_segments:
-            output_segment.extend(all_class_segments[obj])
-            top_k -= 1
-            if top_k == 0:
-                break
+            # output_segment.extend(all_class_segments[obj])
+            # Only accept top n objects with confidence > .8
+            for segment, confidence in all_class_segments[obj]:
+                if confidence > .75:
+                    output_segment.append(segment)
+            if len(output_segment) > 0:
+                top_k -= 1
+                if top_k == 0:
+                    break
     return output_segment
 
 
