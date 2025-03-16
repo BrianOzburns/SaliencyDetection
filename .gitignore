@@ -1,0 +1,5 @@
+.env
+videos
+video_outputs
+.venv
+__pycache__
