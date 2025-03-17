@@ -91,27 +91,46 @@ def getStructuralEdges(image):
 
 def extractStructuralEdges(image):
     """Extracts structural edges from image / video frame."""
+
+    # img = Image.fromarray(image)
+    # img.save(os.path.join("image_outputs","original.png"))
+
     # Convert the image to grayscale
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+    # img = Image.fromarray(gray)
+    # img.save(os.path.join("image_outputs","grayscale.png"))
 
     # Apply Gaussian blur to reduce finer details and noise
     # blurred = cv2.GaussianBlur(gray, (7, 7), 2)
 
     # Apply Bilateral Filter to reduce noise while preserving edges
-    filtered = cv2.bilateralFilter(gray, d=11, sigmaColor=15, sigmaSpace=15)
+    filtered = cv2.bilateralFilter(gray, d=11, sigmaColor=75, sigmaSpace=75)
 
     # plotEdges(filtered)
+    # img = Image.fromarray(filtered)
+    # img.save(os.path.join("image_outputs","bilateral_filtered.png"))
 
     # Apply Canny edge detection with adjusted thresholds
-    edges = cv2.Canny(filtered, threshold1=5, threshold2=25)
+    edges = cv2.Canny(filtered, threshold1=25, threshold2=150)
+
+    # plotEdges(edges)
+    # img = Image.fromarray(edges)
+    # img.save(os.path.join("image_outputs","canny_edges.png"))
 
     # Use dilation to make the main edges thicker and reduce fine details
     dilated_edges = cv2.dilate(edges, None, iterations=3)
 
+    # plotEdges(dilated_edges)
+    # img = Image.fromarray(dilated_edges)
+    # img.save(os.path.join("image_outputs","dilated_edges.png"))
+
     # Optional: Use erosion to remove small artifacts and refine larger edges
-    refined_edges = cv2.erode(dilated_edges, None, iterations=1)
+    refined_edges = cv2.erode(dilated_edges, None, iterations=3)
 
     # plotEdges(refined_edges)
+    # img = Image.fromarray(refined_edges)
+    # img.save(os.path.join("image_outputs","refined_edges.png"))
 
     # Apply Gaussian blur to reduce finer details and noise
     # blurred = cv2.GaussianBlur(refined_edges, (31, 31), 1)
@@ -119,10 +138,12 @@ def extractStructuralEdges(image):
     # plotEdges(blurred)
 
     # Morphological closing to connect broken edges and remove noise
-    kernel = np.ones((4, 4), np.uint8)
-    closed_edges = cv2.morphologyEx(refined_edges, cv2.MORPH_CLOSE, kernel, iterations=5)
+    kernel = np.ones((3, 3), np.uint8)
+    closed_edges = cv2.morphologyEx(refined_edges, cv2.MORPH_CLOSE, kernel, iterations=3)
 
     # plotEdges(closed_edges)
+    # img = Image.fromarray(closed_edges)
+    # img.save(os.path.join("image_outputs","closed_edges.png"))
 
     # Find contours on the edge image
     contours, _ = cv2.findContours(closed_edges.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -143,10 +164,18 @@ def extractStructuralEdges(image):
     # Convert the edge_canvas to grayscale to make it easier to view
     edge_canvas_gray = cv2.cvtColor(edge_canvas, cv2.COLOR_BGR2GRAY)
 
+    # plotEdges(edge_canvas_gray)
+    # img = Image.fromarray(edge_canvas_gray)
+    # img.save(os.path.join("image_outputs","contour_edges.png"))
+
     # Apply a threshold to only keep the strongest edges (removes low-intensity noise)
     _, thresholded_edges = cv2.threshold(edge_canvas_gray, 1, 40, cv2.THRESH_BINARY)
     
     final_edges = cv2.cvtColor(thresholded_edges, cv2.COLOR_GRAY2BGR)
+
+    # plotEdges(final_edges)
+    # img = Image.fromarray(final_edges)
+    # img.save(os.path.join("image_outputs","final_edges.png"))
 
     return final_edges
 

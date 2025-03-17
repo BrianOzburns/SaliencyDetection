@@ -1,6 +1,8 @@
 import cv2
 import numpy as np
 from matplotlib import pyplot as plt
+import os
+from PIL import Image
 
 
 def cannyEdgeDetection(image):
@@ -13,8 +15,8 @@ def cannyEdgeDetection(image):
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
     # Apply edge detection using Canny edge detector
-    low_edge_threshold = 150
-    high_edge_threshold = 250
+    low_edge_threshold = 100
+    high_edge_threshold = 200
     edges = cv2.Canny(gray, low_edge_threshold, high_edge_threshold, apertureSize=3, L2gradient=False)
 
     if color:
@@ -258,20 +260,55 @@ def differenceOfGaussiansEdgeDetection(image):
 # ==================================================================================================== #
 # ==================================================================================================== #
 
-# if __name__ == '__main__':
-#     # image_path = "images/crosswalk1.jpg"
-#     # image_path = "images/crosswalk2.jpg"
-#     # image_path = "images/crosswalk3.png"
-#     image_path = "images\\city1.png"
-#     image = cv2.imread(image_path)
-#     # edges = cannyEdgeDetection(image)
-#     # edges = dollarsEdgeDetection(image)
-#     # edges = hedEdgeDetection(image)
-#     # edges = sobelEdgeDetection(image)
-#     # edges = laplacianEdgeDetection(image)
-#     # edges = waterShedEdgeDetection(image)
-#     edges = differenceOfGaussiansEdgeDetection(image)
+if __name__ == '__main__':
+    # image_path = "images/crosswalk1.jpg"
+    # image_path = "images/crosswalk2.jpg"
+    # image_path = "images/crosswalk3.png"
+    image_path = "images\\crosswalk2.jpg"
+    image = cv2.imread(image_path)
 
+    model = os.path.join("models","yolov8m-seg.pt")
+    
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    model = YOLO(model)
+    model.to(device)
+
+    results = model(image)
+
+    print(results)
+    exit(0)
+
+    edges = cannyEdgeDetection(image)
+    img = Image.fromarray(edges)
+    img.save(os.path.join("image_outputs","canny_edges.png"))
+    # cv2.imshow("edges", edges)
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
+    # edges = dollarsEdgeDetection(image)
+    # cv2.imshow("edges", edges)
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
+    # edges = hedEdgeDetection(image)
+    edges = sobelEdgeDetection(image)
+    img = Image.fromarray(edges)
+    img.save(os.path.join("image_outputs","sobel_edges.png"))
+    # cv2.imshow("edges", edges)
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
+    # edges = laplacianEdgeDetection(image)
+    # cv2.imshow("edges", edges)
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
+    # edges = waterShedEdgeDetection(image)
+    # cv2.imshow("edges", edges)
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
+    edges = differenceOfGaussiansEdgeDetection(image)
+    img = Image.fromarray(edges)
+    img.save(os.path.join("image_outputs","dog_edges.png"))
+    # cv2.imshow("edges", edges)
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
 
 
 #     cv2.imshow("edges", edges)

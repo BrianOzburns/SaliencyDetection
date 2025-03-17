@@ -1,0 +1,10 @@
+The order of the structural images is as follows:
+1. original
+2. grayscale
+3. bilateral_fitered
+4. canny_edges
+5. dilated_edges
+6. refined_edges
+7. closed_edges
+8. contour_edges
+9. final_edges
