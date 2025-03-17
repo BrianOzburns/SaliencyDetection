@@ -146,7 +146,7 @@ def top_k_segments(ranking, result, k=4):
             # output_segment.extend(all_class_segments[obj])
             # Only accept top n objects with confidence > .8
             for segment, confidence in all_class_segments[obj]:
-                if confidence > .75:
+                if confidence > .5:
                     output_segment.append(segment)
             if len(output_segment) > 0:
                 top_k -= 1
@@ -263,9 +263,6 @@ def main(args):
         # structural_edges = getStructuralEdges(frame, all_img_edges)
         structural_edges = extractStructuralEdges(frame)
         # structural_edges = structuralEdgesMethod2(frame)
-
-        print(edges.shape)
-        print(structural_edges.shape)
 
         overlay = cv2.bitwise_or(edges, structural_edges)
 

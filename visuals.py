@@ -3,9 +3,15 @@ import matplotlib.pyplot as plt
 import os
 from PIL import Image
 import cv2
+import openai
+from dotenv import load_dotenv, find_dotenv
 
 from ultralytics import YOLO
 import torch
+
+from yoloVideo import top_k_segments, rankItems, getSalientOnlyImg, sobelEdgeDetection
+from structuralEdges import extractStructuralEdges
+from edgeDetection import increaseContrast
 
 
 def visualizeSequentialImages(directory):
@@ -58,15 +64,44 @@ def yoloOnImage(image_path):
     model = YOLO(model)
     model.to(device)
 
+    # Run YOLOv8 segmentation on the frame
     image = cv2.imread(image_path)
+
     results = model(image)
 
-    cv2.imshow("results", results)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    # Get top K segments
+    rankings = rankItems(image, openai.api_key)
+    output_segment = top_k_segments(rankings, results, k=4)
+
+    # Get salient only img
+    salient_only_img = getSalientOnlyImg(image, output_segment)
+    color_adjusted = cv2.cvtColor(salient_only_img, cv2.COLOR_BGR2RGB)
+    img = Image.fromarray(color_adjusted)
+    img.save(os.path.join("image_outputs","salient_only_img.png"))
+
+    # Get Sobel and Structural Edges
+    # salient_only_img = cv2.cvtColor(salient_only_img, cv2.COLOR_BGR2GRAY)
+    sobel_edges = sobelEdgeDetection(salient_only_img)
+    edges = increaseContrast(sobel_edges)
+    # all_img_edges = sobelEdgeDetection(frame)
+    # structural_edges = getStructuralEdges(frame, all_img_edges)
+    structural_edges = extractStructuralEdges(image)
+    # structural_edges = structuralEdgesMethod2(frame)
+    
+    overlay = cv2.bitwise_or(edges, structural_edges)
+    img = Image.fromarray(overlay)
+    img.save(os.path.join("image_outputs","final.png"))
+    exit(0)
 
 
-image_path = os.path.join("images","city1.png")
+image_path = os.path.join("images","crosswalk2.jpg")
+
+# Setup openai
+load_dotenv(find_dotenv()) # read local .env file
+openai_api_key = os.getenv("OPENAI_API_KEY")
+openai.api_key = openai_api_key
+os.environ['OPENAI_API_KEY'] = openai_api_key
+
 yoloOnImage(image_path)
 
 
