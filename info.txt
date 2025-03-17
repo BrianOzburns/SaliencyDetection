@@ -1,0 +1,8 @@
+Instructions on how to set up project:
+1. setup python environment
+    Run the following commands in from project directory
+    a. python -m venv .venv
+    b. source .venv/bin/activate
+        or if on Windows
+       .venv\Scripts\activate
+    c. pip install -r requirements.txt
