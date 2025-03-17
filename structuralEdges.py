@@ -105,30 +105,30 @@ def extractStructuralEdges(image):
     # blurred = cv2.GaussianBlur(gray, (7, 7), 2)
 
     # Apply Bilateral Filter to reduce noise while preserving edges
-    filtered = cv2.bilateralFilter(gray, d=11, sigmaColor=75, sigmaSpace=75)
+    filtered = cv2.bilateralFilter(gray, d=11, sigmaColor=15, sigmaSpace=15)
 
-    # plotEdges(filtered)
+    plotEdges(filtered)
     # img = Image.fromarray(filtered)
     # img.save(os.path.join("image_outputs","bilateral_filtered.png"))
 
     # Apply Canny edge detection with adjusted thresholds
-    edges = cv2.Canny(filtered, threshold1=25, threshold2=150)
+    edges = cv2.Canny(filtered, threshold1=5, threshold2=20)
 
-    # plotEdges(edges)
+    plotEdges(edges)
     # img = Image.fromarray(edges)
     # img.save(os.path.join("image_outputs","canny_edges.png"))
 
     # Use dilation to make the main edges thicker and reduce fine details
-    dilated_edges = cv2.dilate(edges, None, iterations=3)
+    dilated_edges = cv2.dilate(edges, None, iterations=4)
 
-    # plotEdges(dilated_edges)
+    plotEdges(dilated_edges)
     # img = Image.fromarray(dilated_edges)
     # img.save(os.path.join("image_outputs","dilated_edges.png"))
 
     # Optional: Use erosion to remove small artifacts and refine larger edges
-    refined_edges = cv2.erode(dilated_edges, None, iterations=3)
+    refined_edges = cv2.erode(dilated_edges, None, iterations=1)
 
-    # plotEdges(refined_edges)
+    plotEdges(refined_edges)
     # img = Image.fromarray(refined_edges)
     # img.save(os.path.join("image_outputs","refined_edges.png"))
 
@@ -141,7 +141,7 @@ def extractStructuralEdges(image):
     kernel = np.ones((3, 3), np.uint8)
     closed_edges = cv2.morphologyEx(refined_edges, cv2.MORPH_CLOSE, kernel, iterations=3)
 
-    # plotEdges(closed_edges)
+    plotEdges(closed_edges)
     # img = Image.fromarray(closed_edges)
     # img.save(os.path.join("image_outputs","closed_edges.png"))
 
@@ -164,16 +164,16 @@ def extractStructuralEdges(image):
     # Convert the edge_canvas to grayscale to make it easier to view
     edge_canvas_gray = cv2.cvtColor(edge_canvas, cv2.COLOR_BGR2GRAY)
 
-    # plotEdges(edge_canvas_gray)
+    plotEdges(edge_canvas_gray)
     # img = Image.fromarray(edge_canvas_gray)
     # img.save(os.path.join("image_outputs","contour_edges.png"))
 
     # Apply a threshold to only keep the strongest edges (removes low-intensity noise)
-    _, thresholded_edges = cv2.threshold(edge_canvas_gray, 1, 40, cv2.THRESH_BINARY)
+    _, thresholded_edges = cv2.threshold(edge_canvas_gray, 1, 100, cv2.THRESH_BINARY)
     
     final_edges = cv2.cvtColor(thresholded_edges, cv2.COLOR_GRAY2BGR)
 
-    # plotEdges(final_edges)
+    plotEdges(final_edges)
     # img = Image.fromarray(final_edges)
     # img.save(os.path.join("image_outputs","final_edges.png"))
 

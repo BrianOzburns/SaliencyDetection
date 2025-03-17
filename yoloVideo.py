@@ -180,8 +180,8 @@ def main(args):
         testing = True
 
     if testing:
-        image_paths = [os.path.join("images","concert.jpg"), os.path.join("images","crosswalk2.jpg")]
-        # image_paths = [os.path.join("images","city1.png"),os.path.join("images","city2.png"),os.path.join("images","city3.png"),os.path.join("images","city4.png")]
+        # image_paths = [os.path.join("images","concert.jpg"), os.path.join("images","crosswalk2.jpg")]
+        image_paths = [os.path.join("images","city1.png"),os.path.join("images","city2.png"),os.path.join("images","city3.png"),os.path.join("images","city4.png")]
         for image_path in image_paths:
             image = cv2.imread(image_path)
             sobel_edges = sobelEdgeDetection(image)
