@@ -146,7 +146,7 @@ def top_k_segments(ranking, result, k=4):
             # output_segment.extend(all_class_segments[obj])
             # Only accept top n objects with confidence > .8
             for segment, confidence in all_class_segments[obj]:
-                if confidence > .5:
+                if confidence > 0.75:
                     output_segment.append(segment)
             if len(output_segment) > 0:
                 top_k -= 1
@@ -181,7 +181,8 @@ def main(args):
 
     if testing:
         # image_paths = [os.path.join("images","concert.jpg"), os.path.join("images","crosswalk2.jpg")]
-        image_paths = [os.path.join("images","city1.png"),os.path.join("images","city2.png"),os.path.join("images","city3.png"),os.path.join("images","city4.png")]
+        # image_paths = [os.path.join("images","city1.png"),os.path.join("images","city2.png"),os.path.join("images","city3.png"),os.path.join("images","city4.png")]
+        image_paths = [os.path.join("images","walking_in_park.png")]
         for image_path in image_paths:
             image = cv2.imread(image_path)
             sobel_edges = sobelEdgeDetection(image)
